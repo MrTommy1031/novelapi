@@ -4,7 +4,9 @@ export class Generator
 {
     auth;
     defaultModel = 'euterpe-v2'
+    defaultImageModel = 'nai-diffusion'
     generationOptions = defaultGeneration;
+    generationImageOptions = defaultImageGeneration;
     constructor(auth)
     {
         this.auth = auth;
@@ -50,6 +52,16 @@ const defaultGeneration = {
     "max_length": 160,
     "generate_until_sentence": true
 }
+const defaultImageGeneration = {
+    "width": 640,
+    "height": 640,
+    "sampler": "k_euler_ancestral",
+    "steps": 28,
+    "n_samples": 1,
+    "strength": 0.7,
+    "noise": 0.2,
+    "uc": ""
+}
 
 export async function GGenerateText(auth, input, model, parameters)
 {
@@ -72,4 +84,16 @@ export async function GClassify(auth, input)
         body: JSON.stringify({'input': input})
     });
     return await response.json();
+}
+
+export async function GGenerateImage(auth, input, model, parameters)
+{
+
+    const response = await fetch('https://api.novelai.net/ai/generate-image',
+        {
+            method: 'POST',
+            headers: {'Authorization': 'Bearer ' + auth, 'Content-Type': 'application/json'},
+            body: JSON.stringify({'input': input, 'model': model, 'parameters': parameters})
+        });
+    return await response.text();
 }
